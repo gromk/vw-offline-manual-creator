@@ -1,0 +1,25 @@
+                    <div id="sideBar" class="sideBar_welcome cssSticky col-md-4" style="top: 45px">
+                        <div id="sideBarContent" style="overflow-x:hidden;">
+                            <div id="tabs_sidebar" style="background-color: white; display: block; top: 59px; max-height: 600px; width: 100%;">
+                                <ul class="nav nav-tabs">
+                                    <li id="nav-tabs__contentTable" class="nav-tabs__tab active" style="width: 100%;">
+                                        <span>{{TOC_TITLE}}</span>
+                                    </li>
+                                </ul>
+                                <div id="contentTable" style="display: block; overflow-y: scroll; max-height: 460px;">
+                                     <div>
+                                         <div id="toc{{USERGUIDE_ID}}" class="panel contentTable__treePanel">
+                                            <div class="panel-heading contentTable__Header isOpen">
+                                                <span class="contentTable__Heading">{{USERGUIDE_TITLE}}</span>
+                                            </div>
+                                            <div class="panel-body contentTable__Body">            
+                                                <ul class="tree">
+                                                {{TOC_CONTENT}}
+                                                </ul>
+                                            </div>
+                                         </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>

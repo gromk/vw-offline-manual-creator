@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Digital Manual | Volkswagen</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="/resources/tenants/default/resources/webicon/splash.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="description" content="VW Volkswagen Userguide"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="main.css" rel="stylesheet" type="text/css"/>
+        <link href="print.css" media="print" rel="stylesheet" type="text/css"/>
+        <style type="text/css">
+
+            /* "Loading..." overlay displayed until the page is fully loaded */
+            body.loading {
+                margin: 0;
+                height: 100%;
+                overflow: hidden;
+            }
+            #loading {
+                position: fixed;
+                opacity: 0.9;
+                left: 0px;
+                top: 0px;
+                width: 100%;
+                height: 100%;
+                background-color: #ccc;
+                background-image: url(img/repo_logo.svg) !important;
+                background-repeat: no-repeat !important;
+                background-position: center center;
+                background-size: 160px 120px;
+                z-index: 9999999;
+            }
+            #loading.hiding {
+                opacity: 0;
+                transition: opacity 2s ease-in-out;
+            }
+            #loading > div  {
+                font-family: sans-serif !important;
+                font-weight: 600 !important;
+                font-size: 3em;
+                white-space: nowrap;
+                color: black;
+                position: absolute;
+                left: calc(50% + 15px);
+                top: calc(50% + 70px);
+                transform: translate3d(-50%, 0, 0);
+            }
+            .lds-ellipsis {
+              display: inline-block;
+              position: relative;
+              width: 60px;
+              height: 1em;
+            }
+            .lds-ellipsis div {
+              position: absolute;
+              top: 37px;
+              width: 9px;
+              height: 9px;
+              border-radius: 50% !important;
+              background: black;
+              animation-timing-function: cubic-bezier(0, 1, 1, 0);
+            }
+            .lds-ellipsis div:nth-child(1) {
+              left: 6px;
+              animation: lds-ellipsis1 0.6s infinite;
+            }
+            .lds-ellipsis div:nth-child(2) {
+              left: 6px;
+              animation: lds-ellipsis2 0.6s infinite;
+            }
+            .lds-ellipsis div:nth-child(3) {
+              left: 24px;
+              animation: lds-ellipsis2 0.6s infinite;
+            }
+            .lds-ellipsis div:nth-child(4) {
+              left: 42px;
+              animation: lds-ellipsis3 0.6s infinite;
+            }
+            @keyframes lds-ellipsis1 {
+              0% {
+                transform: scale(0);
+              }
+              100% {
+                transform: scale(1);
+              }
+            }
+            @keyframes lds-ellipsis3 {
+              0% {
+                transform: scale(1);
+              }
+              100% {
+                transform: scale(0);
+              }
+            }
+            @keyframes lds-ellipsis2 {
+              0% {
+                transform: translate(0, 0);
+              }
+              100% {
+                transform: translate(18px, 0);
+              }
+            }
+
+            /* Makes the side bar disappear when the window is not wide enough */
+            @media (max-width: 991px) {
+                #sideBar {
+                    display: none;
+                }
+            }
+
+            /* Force the items in the sidebar to be black */
+            div#sideBar a {
+                color: black !important;
+            }
+
+            /* TopicPilot hides all content by default : here we disable the few CSS properties responsible for this */
+            div.topicintreebox {
+                opacity: 1;
+            }
+
+            /* Indicate that +/- in the side bar are clickable by changing the mouse cursor  */
+            span.mdi.mdi-plus, span.mdi.mdi-minus {
+                cursor: pointer;
+            }
+
+            /* Classes for managing expanding/collapsing of a topic in the body of the manual */
+            div.tttitle.selected > div > div > .topicintreebox {
+                display: block !important;
+            }
+            div.tttitle:not(.selected) > div > div > .topicintreebox {
+                display: none !important;
+            }
+            div.ttchildren.selected {
+                display: block !important;
+            }
+            div.ttchildren:not(.selected) {
+                display: none !important;
+            }
+
+            /* Classes for managing expanding/collapsing of the treeview in the sidebar */
+            div.contentTable__panel.selected > div.contentTablePanel__body {
+                display: block !important;
+            }
+            div.contentTable__panel.selected > div > span > span.mdi-plus {
+                display: none !important;
+            }
+            div.contentTable__panel:not(.selected) > div.contentTablePanel__body {
+                display: none !important;
+            }
+            div.contentTable__panel:not(.selected) > div > span > span.mdi-minus {
+                display: none !important;
+            }
+
+            /* Classes for managing the tooltip box when hovering some acronyms */
+            /* (no javascript, adapted from https://github.com/ghosh/microtip)  */
+            [data-toggle="popover"] {
+                position: relative;
+            }
+            .topicintreebox {
+                overflow: visible !important;   /* prevents tooltip from being clipped */
+            }
+            [data-toggle="popover"]::before,
+            [data-toggle="popover"]::after {
+              position: absolute;
+              box-sizing: border-box;
+              pointer-events: none;
+              opacity: 0;
+              z-index: 10;
+              transform: translate3d(0, 0, 0);   /* unlike translate(), translate3d() uses hardware acceleration, even for 2D transforms */
+              transform-origin: top;
+              -webkit-backface-visibility: hidden;
+              backface-visibility: hidden;
+              will-change: transform;
+              transition: all .18s ease-in-out 0s;
+            }
+            [data-toggle="popover"]::before {
+              content: "";
+              background-size: 100% auto !important;
+              background: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNnB4IiBoZWlnaHQ9IjEycHgiPjxwYXRoIGZpbGw9InJnYmEoMTcsIDE3LCAxNywgMC45KSIgdHJhbnNmb3JtPSJyb3RhdGUoMCkiIGQ9Ik0yLjY1OCwwLjAwMCBDLTEzLjYxNSwwLjAwMCA1MC45MzgsMC4wMDAgMzQuNjYyLDAuMDAwIEMyOC42NjIsMC4wMDAgMjMuMDM1LDEyLjAwMiAxOC42NjAsMTIuMDAyIEMxNC4yODUsMTIuMDAyIDguNTk0LDAuMDAwIDIuNjU4LDAuMDAwIFoiLz48L3N2Zz4=") no-repeat;
+              height: 6px;
+              width: 18px;
+              left: 50%;
+              bottom: 100%;
+              margin-bottom: 1px;
+              transform: translate3d(-50%, 0, 0);
+            }
+            [data-toggle="popover"]::after {
+              content: attr(data-content);
+              background: rgba(17, 17, 17, .9);
+              border-radius: 4px;
+              color: #ffffff;
+              font-size: 13px;
+              box-sizing: content-box;
+              width: 260px;
+              bottom: 100%;
+              left: 50%;
+              margin-bottom: 7px;
+              padding: .5em 1em;
+              transform: translate3d(-50%, 0, 0);
+            }
+            [data-toggle="popover"]:hover::before,
+            [data-toggle="popover"]:hover::after,
+            [data-toggle="popover"]:focus::before,
+            [data-toggle="popover"]:focus::after {
+              opacity: 1;
+              pointer-events: auto;
+              transform: translate3d(-50%, -5px, 0);
+            }
+        </style>
+    </head>
+    
+    <body style="padding-top: 0px; padding-bottom: 0px" class="loading">
+
+        <div id="loading">
+            <div>
+                <span>Loading</span><div class="lds-ellipsis">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="wrap" class="{{LANG_CODE}}">
+
+            <div class="container">
+                <div id="results" class="row" style="margin-top: 45px">
+                
+                    <div id="sideBar" class="sideBar_welcome cssSticky col-md-4" style="top: 45px">
+                        <div id="sideBarContent" style="overflow-x:hidden;">
+                            <div id="tabs_sidebar" style="background-color: white; display: block; top: 59px; max-height: 600px; width: 100%;">
+                                <ul class="nav nav-tabs">
+                                    <li id="nav-tabs__contentTable" class="nav-tabs__tab active" style="width: 100%;">
+                                        <span>{{TOC_TITLE}}</span>
+                                    </li>
+                                </ul>
+                                <div id="contentTable" style="display: block; overflow-y: scroll; max-height: 460px;">
+                                     <div>
+                                         <div id="toc{{USERGUIDE_ID}}" class="panel contentTable__treePanel">
+                                            <div class="panel-heading contentTable__Header isOpen">
+                                                <span class="contentTable__Heading">{{USERGUIDE_TITLE}}</span>
+                                            </div>
+                                            <div class="panel-body contentTable__Body">            
+                                                <ul class="tree">
+                                                {{TOC_CONTENT}}
+                                                </ul>
+                                            </div>
+                                         </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="resultList" class="col-md-8">
+                        <div>
+                            <div>
+
+                                <div id="topic_{{USERGUIDE_ID}}" class="media row">
+                                    <div class="welcome-topic-col emptytopicPanel panel tree_panel panel-default row result printTopic">
+                                    
+                                        <div class="panel-heading row topic-tile" style="display:block">
+                                            <div class="col-xs-2 meta">
+                                            </div>
+                                            <a class="topicLinkWrapper col-xs-10">
+                                                <div class="col-xs-8 title complete">
+                                                    <h3 class="modell-bez">
+                                                        <svg viewBox="0 0 56 56"  xmlns="http://www.w3.org/2000/svg" style="float: left; height: 1em; margin-top: 4px; margin-right: 5px">
+                                                            <path d="M28 52.7C14.5 52.7 3.4 41.5 3.4 28c0-2.8.5-5.5 1.4-8.1l14.4 28c.2.4.4.7.9.7s.7-.3.9-.7L27.7 33c.1-.2.2-.3.3-.3.2 0 .2.2.3.3l6.8 14.9c.2.4.4.7.9.7s.7-.3.9-.7l14.4-28c.9 2.5 1.4 5.2 1.4 8.1-.1 13.5-11.2 24.7-24.7 24.7zm0-31.1c-.2 0-.2-.2-.3-.3L20 4.7c2.5-.9 5.2-1.4 8-1.4s5.5.5 8 1.4l-7.7 16.6c-.1.1-.1.3-.3.3zm-8.1 18c-.2 0-.2-.2-.3-.3L7 15.1c2.2-3.6 5.4-6.6 9.1-8.7L25 25.6c.2.4.4.5.7.5h4.6c.3 0 .5-.1.7-.5l8.8-19.2c3.7 2.1 6.9 5.1 9.1 8.7L36.4 39.3c-.1.2-.2.3-.3.3-.2 0-.2-.2-.3-.3L31 28.7c-.2-.4-.4-.5-.7-.5h-4.6c-.3 0-.5.1-.7.5l-4.8 10.6c-.1.1-.1.3-.3.3zM28 56c15.5 0 28-12.5 28-28S43.5 0 28 0 0 12.5 0 28s12.5 28 28 28z"></path>
+                                                        </svg>
+                                                        {{VEHICLE_MODEL}}
+                                                    </h3>
+                                                    <h4 class="doc-title">{{USERGUIDE_TITLE}}</h4>
+                                                    <div class="modell-var">{{USERGUIDE_DATE}}</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        
+                                        <div class="tree_body panel-body opendTree topicContentVisible animationComplete">
+                                            <div class="topic-content">{{USERGUIDE_CONTENT}}</div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function() {
+                // describe how the topics are expanded/collapsed
+                // can be 'all', 'single' or 'toggle'
+                const extend_mode = '{{EXTEND_MODE}}';
+
+                // this function returns the closest ancestor of <elem> (DOM element) matching a given <selector> (string)
+                // unlike JS built-in closest(), this function never returns <elem>
+                getAncestor = function (elem, selector) {
+                    let ancestor = elem.parentNode;
+                    while (ancestor) {
+                        if (typeof ancestor.matches !== 'function') return null;
+                        if (ancestor.matches(selector)) return ancestor;
+                        ancestor = ancestor.parentNode
+                    }
+                    return null;
+                };
+
+                // Attach a click handler on every plus/minus icon in the side bar (tree view)
+                for (const icon of document.querySelectorAll('#sideBar .mdi')) {
+                    icon.addEventListener('click', function(e) {
+                                let classes = getAncestor(e.target, '.contentTable__panel.w_children').classList;
+                                classes.toggle('selected');
+                                // 'auto' class is added whenever a node is expanded in
+                                //  the side bar without the user clicking on the '+' icon
+                                classes.remove('auto');
+                            }, false);
+                }
+
+                if (extend_mode != 'all') {
+
+                    // activate a node in the body of the manual
+                    //    <action> can be 'toggle' or 'expand' or 'collapse')
+                    //    the node is defined by <type> (either 'topic' or 'folder') and an ID
+                    //    <scroll> indicate if the viewport must be scrolled to that node (boolean) 
+                    toggleNode = function(type, node_id, action='toggle', scroll=false) {
+                        const names = {'topic': 'title', 'folder': 'children'};
+                        const elt = document.getElementById(names[type]+node_id);
+                        const selected_topic_elt = document.querySelector('div.tttitle.selected');  // previously selected topic (no folder !) : may be undefined
+
+                        // first, we toggle/expand/collapse the required node
+                        const methods = {'toggle': 'toggle', 'expand': 'add', 'collapse': 'remove'};
+                        const method = methods[action];
+                        elt.classList[method]('selected');
+
+                        // if the node has just been expanded...
+                        if (elt.classList.contains('selected')) {
+
+                            // it is nested, we also need to make sure that all its parents are also expanded
+                            let ancestor = elt;
+                            let folders = (type == 'folder') ? [elt] : [];
+                            while (ancestor = getAncestor(ancestor, 'div.ttchildren')) {
+                                folders.push(ancestor);
+                                ancestor.classList.add('selected');
+                            }
+
+                            // in "single" mode, we close the previously open topic and all the unrelated folders
+                            if (extend_mode == 'single') {
+                                if (selected_topic_elt && selected_topic_elt != elt) toggleNode('topic', selected_topic_elt.id.substring(5), 'collapse');
+                                for (const folder of document.querySelectorAll('div.ttchildren')) {
+                                    if (!folders.includes(folder)) {
+                                        const classes = folder.classList;
+                                        if (classes.contains('selected')) {
+                                            classes.remove('selected');
+                                            updateTocNodeState('folder', folder.id.substring(8));   // also collapse the treeview
+                                        }
+                                    }
+                                }
+                            }
+
+                            // scroll the newly selected topic to the top of the page
+                            if (scroll) scrollTo((type == 'topic') ? elt : elt.previousElementSibling);
+                        }
+                    }
+
+                    // change the state (expand/collapse) of a node in the side bar so that it reflects the state of the
+                    // associated node in the body of the manual (defined by <type>='topic'|'folder' and its ID)
+                    // nodes in the side bar will not get collapsed if they were expanded manually (click on the '+' icon)
+                    updateTocNodeState = function(type, node_id) {
+                        const names = {'topic': 'title', 'folder': 'children'};
+                        const selected = document.getElementById(names[type]+node_id).classList.contains('selected');
+                        const elt = document.getElementById('toc'+node_id);
+                        if (selected) {
+                            let ancestor = elt;
+                            while (ancestor = getAncestor(ancestor, '.contentTable__panel.w_children')) {
+                                if (!ancestor.classList.contains('selected')) ancestor.classList.add('selected', 'auto');
+                            }
+                        }
+                        else {
+                            if (type=='folder') getAncestor(elt, '.contentTable__panel.w_children').classList.remove('selected', 'auto');
+                        }
+                    }
+
+                    // return the node ID of the topic which contains <elem> (DOM element within the body of the manual)
+                    getTopicByElt = function(elem) {
+                        const ancestor = getAncestor(elem, 'div[id^="title"].tttitle');
+                        if (!ancestor) return null;
+                        return ancestor.id.substring(5);
+                    }
+
+                    // scroll the viewport so that <elem> (DOM element within the body of the manual) has its top flush with
+                    // the top border of the window
+                    scrollTo = function(elem) {
+                        elem.scrollIntoView({
+                                    block: 'start',
+                                    behavior: 'smooth'
+                                });
+                    }
+
+                    // Attach a click handler to the title bars of all the topics and folders to make them togglable
+                    for (const topic of document.querySelectorAll('a.topicTreeLink')) {
+                        topic.addEventListener('click', function(e) {
+                                        const topic_id = getTopicByElt(e.currentTarget);
+                                        toggleNode('topic', topic_id, 'toggle', true);
+                                        updateTocNodeState('topic', topic_id);
+                                    }, false);
+                    }
+                    for (const folder of document.querySelectorAll('div[tree-toggle]')) {
+                        folder.addEventListener('click', function(e) {
+                                        const topic_id = getTopicByElt(e.currentTarget);
+                                        toggleNode('folder', topic_id, 'toggle', (extend_mode == 'single'));
+                                        updateTocNodeState('folder', topic_id);
+                                    }, false);
+                    }
+
+                    // If topics are togglable, javascript must be used to open the correct topic
+                    // whenever an internal hyperlink is clicked (pointing to another topic or a figure)
+                    for (const link of document.querySelectorAll('a[data-goto]')) {
+                        link.addEventListener('click', function(e) {
+                                        const target = document.getElementById(e.currentTarget.getAttribute('data-goto'));
+                                        if (target) {
+                                            const topic_id = getTopicByElt(target);
+                                            toggleNode('topic', topic_id, 'expand', false);
+                                            updateTocNodeState('topic', topic_id);
+                                            scrollTo(target);
+                                        }
+                                        e.preventDefault();
+                                        return false;
+                                    }, false);
+                    }
+                }
+
+                // Hide the "Loading..." overlay
+                setTimeout(function() {
+                    document.body.classList.remove('loading');
+                    let elt = document.getElementById('loading');
+                    elt.classList.add('hiding');
+                    setTimeout(function() {
+                        elt.style.display = 'none';
+                    }, 2000);
+                }, 1000);
+            })();
+        </script>
+    </body>
+</html>
