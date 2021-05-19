@@ -115,12 +115,12 @@ def build_dom(topic, session, templates, crash_on_error, level=0) :
         html_href = {}
         if topic['linkTarget'] != "" :
             try :
-                r = session.get(f"https://userguide.volkswagen.de/api/web/V3/topic?key={topic['linkTarget']}&displaytype=topic&language={lang}&query=undefined")
+                r = session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V3/topic?key={topic['linkTarget']}&displaytype=topic&language={lang}&query=undefined")
                 r.raise_for_status()
                 rj = r.json()
                 content = rj['bodyHtml']
                 if '</html>' in content :
-                    content = re.match(r'<html[^>]*>(.*)</html>', content).group(1)
+                    content = re.match(r'<html[^>]*>(.*)</html>', content, re.DOTALL).group(1)
                 html_href = rj['linkState']
                 
             except requests.exceptions.HTTPError as e :
@@ -194,15 +194,19 @@ else :
 http_session = requests.Session()
 
 # Create the JSESSIONID cookie and associate it with the VIN number
-r2 = http_session.post("https://userguide.volkswagen.de/public/vin/login/en_GB",
+r2 = http_session.post(f"https://userguide.volkswagen.de/public/vin/login/{lang}",
                             data=f'vin={vin}',
                             headers={
                                 'Content-Type': 'application/x-www-form-urlencoded',
                                 'Content-Length': '21'
                             })
 
+# Check if 'legacy' must be appended to the base url
+legacy_mode = ('legacy' in r2.url)
+legacy_str = '/legacy' if legacy_mode else ''
+
 # Request for the list of available manuals
-r3 = http_session.get(f"https://userguide.volkswagen.de/api/web/V3/search?query=&facetfilters=topic-type_|_welcome&lang={lang}&page=0&pageSize=20")
+r3 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V3/search?query=&facetfilters=topic-type_|_welcome&lang={lang}&page=0&pageSize=20")
 j3 = r3.json()
 
 manuals = j3['results']
@@ -243,7 +247,7 @@ logging.info(f"   => vehicle VIN   : {vin}")
 logging.info(f"   => manual title  : {manual['title']}\n")
 
 # Language-dependant strings
-r = http_session.get(f"https://userguide.volkswagen.de/w/{lang}/welcome/")
+r = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/w/{lang}/welcome/")
 strings = dict(re.findall(r'strings\["([a-zA-Z0-9.]+)"]\s*=\s*"([^"]+)";', r.text))
 
 # Templates of the webpage, containing several {{PLACEHOLDERS}}
@@ -252,7 +256,7 @@ for k in ['index', 'topic_w_children', 'topic_wo_children', 'toc_w_children', 't
     templates[k] = (script_path/"templates"/f"{k}.html").read_text()
 
 # Load the tree structure of the user guide (JSON + DOM)
-r4 = http_session.get(f"https://userguide.volkswagen.de/api/web/V3/topic?key={manual['topicId']}&displaytype=topic&language={lang}&query=undefined")
+r4 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V3/topic?key={manual['topicId']}&displaytype=topic&language={lang}&query=undefined")
 j4 = r4.json()
 ug_json = j4['trees'][0]['children']
 ug_soup = bs(j4['abstractText'], 'lxml')
@@ -365,7 +369,7 @@ logging.info("\nCreating main.css and print.css based on the online CSS files.\n
 
 html = str(soup)
 
-r5 = http_session.get("https://userguide.volkswagen.de/w/en_GB/")
+r5 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/w/{lang}/")
 webpage = bs(r5.text, 'lxml')
 
 css_screen = ""
@@ -416,7 +420,7 @@ logging.info("\nDownloading the page resources (images, fonts). This can take a 
 
 # Images in the HTML body
 for img in soup.findAll('img') :
-    url = f"https://userguide.volkswagen.de{img['data-src']}"
+    url = f"https://userguide.volkswagen.de{legacy_str}{img['data-src']}"
     filename = url.split('key=')[1]
     local_path = subfolder/"img"/filename
     if not local_path.is_file() :
