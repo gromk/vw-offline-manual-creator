@@ -420,7 +420,10 @@ logging.info("\nDownloading the page resources (images, fonts). This can take a 
 
 # Images in the HTML body
 for img in soup.findAll('img') :
-    url = f"https://userguide.volkswagen.de{legacy_str}{img['data-src']}"
+    if img['data-src'].startswith('https:'):
+        url = img['data-src']
+    else:
+        url = f"https://userguide.volkswagen.de{legacy_str}{img['data-src']}"
     filename = url.split('key=')[1]
     local_path = subfolder/"img"/filename
     if not local_path.is_file() :
