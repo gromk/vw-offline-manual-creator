@@ -115,7 +115,7 @@ def build_dom(topic, session, templates, crash_on_error, level=0) :
         html_href = {}
         if topic['linkTarget'] != "" :
             try :
-                r = session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V3/topic?key={topic['linkTarget']}&displaytype=topic&language={lang}&query=undefined")
+                r = session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V6/topic?key={topic['linkTarget']}&displaytype=topic&language={lang}&query=undefined")
                 r.raise_for_status()
                 rj = r.json()
                 content = rj['bodyHtml']
@@ -206,7 +206,7 @@ legacy_mode = ('legacy' in r2.url)
 legacy_str = '/legacy' if legacy_mode else ''
 
 # Request for the list of available manuals
-r3 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V3/search?query=&facetfilters=topic-type_|_welcome&lang={lang}&page=0&pageSize=20")
+r3 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V6/search?query=&facetfilters=topic-type_|_welcome&lang={lang}&page=0&pageSize=20")
 j3 = r3.json()
 
 manuals = j3['results']
@@ -256,7 +256,7 @@ for k in ['index', 'topic_w_children', 'topic_wo_children', 'toc_w_children', 't
     templates[k] = (script_path/"templates"/f"{k}.html").read_text()
 
 # Load the tree structure of the user guide (JSON + DOM)
-r4 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V3/topic?key={manual['topicId']}&displaytype=topic&language={lang}&query=undefined")
+r4 = http_session.get(f"https://userguide.volkswagen.de{legacy_str}/api/web/V6/topic?key={manual['topicId']}&displaytype=topic&language={lang}&query=undefined")
 j4 = r4.json()
 ug_json = j4['trees'][0]['children']
 ug_soup = bs(j4['abstractText'], 'lxml')
