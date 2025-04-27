@@ -185,8 +185,8 @@ if len(vehicle_id) != 17 :
         sys.exit(2)
     vin = j1['vehicleDetails']['vin']
 else :
-    if not vehicle_id.startswith("WVGZZZ") :
-        logging.error("The VIN number MUST start with WVGZZZ (Volkswagen brand)")
+    if not vehicle_id.startswith("WVGZZZ") and not vehicle_id.startswith("WVWZZZ") :
+        logging.error("The VIN number MUST start with WVGZZZ or WVWZZZ (Volkswagen brand)")
         sys.exit(3)
     vin = vehicle_id
 
